@@ -13,10 +13,10 @@ export class SearchPage {
         this.page = page;
         this.searchInput = page.getByRole('textbox', {name: 'Search 19 million titles by'})
         this.searchButton = page.getByRole('button', {name: 'Search Button'})
-        this.searchResults = page.locator("//div[@class = 'AllEditionsItem-tile Recipe-default']");
+        this.searchResults = page.locator("div.AllEditionsItem-tile");
         this.sortByDrop = page.getByLabel('Sort by:');
         this.moreGenresButton = page.getByRole('button', {name: 'Expand to show 17 more options'})
-        this.bookItems = page.locator("//div/a[@class=\"SearchResultGridItem undefined\"]");
+        this.bookItems = page.locator('a.SearchResultGridItem');
     }
 
     async goto() {
@@ -25,21 +25,21 @@ export class SearchPage {
 
     async applyOption(title: string) {
         const option = this.getOption(title);
-        await option.waitFor({ state: 'visible' });
+        await option.waitFor({state: 'visible'});
         await expect(option).not.toHaveClass(/Checkbox-loading/);
         await option.click();
     }
 
     getOption(title: string): Locator {
-        return this.page.locator(`//div[text()='${title}']/following-sibling::div`);
+        return this.page.getByRole('checkbox', {name: title, exact: true});
     }
 
     async expectOptionChecked(title: string, checked = true, timeout = 100000) {
         const option = this.getOption(title);
         if (checked) {
-            await expect(option).toBeChecked({ timeout });
+            await expect(option).toBeChecked({timeout});
         } else {
-            await expect(option).not.toBeChecked({ timeout });
+            await expect(option).not.toBeChecked({timeout});
         }
     }
 }
